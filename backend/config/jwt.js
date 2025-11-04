@@ -1,0 +1,6 @@
+module.exports = {
+  JWT_SECRET: process.env.JWT_SECRET || "0e8K9b0bU5UAcsZb89CLnQ8OtTFTiATbC5AdHjhk2LU=",
+  REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || "xMZ1u6shu21w2TvG6k8xppoEl2y0ZXUPwVD+n/ZlHmU=",
+  JWT_EXPIRES_IN: "15m",   
+  REFRESH_EXPIRES_IN: "7d"
+};

@@ -1,0 +1,58 @@
+# -------------------------------------------------------------
+# General Ignored Files
+# -------------------------------------------------------------
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Dependency directories (these are generated files)
+node_modules/
+
+# -------------------------------------------------------------
+# Frontend (React/Tailwind) Specific Ignores
+# Located in the 'frontend' folder
+# -------------------------------------------------------------
+# Build output directory
+frontend/build/
+frontend/dist/
+frontend/node_modules/
+
+# Development server output
+frontend/.cache/
+frontend/.parcel-cache/
+
+# Tailwind CSS specific: sometimes an output CSS file might be generated and needs ignoring
+# If your final CSS file is generated into a build folder, the above rules cover it.
+
+# TypeScript cache/logs (if using TS)
+frontend/*.tsbuildinfo
+
+# Coverage output
+frontend/coverage/
+
+# -------------------------------------------------------------
+# Backend (Node.js) Specific Ignores
+# Located in the 'backend' folder
+# -------------------------------------------------------------
+# Dependency directory (already covered by top-level node_modules/ but good practice)
+backend/node_modules/
+
+# Runtime data (optional, only if you create these folders)
+backend/logs/
+backend/temp/
+
+# Uploads directory (You mentioned an 'uploads' folder earlier, often you don't want these committed)
+backend/uploads/
+
+# -------------------------------------------------------------
+# Git and IDE related ignores
+# -------------------------------------------------------------
+.git/
+.idea/
+.vscode/
+*.swp
