@@ -3,6 +3,8 @@ import axios from "axios";
 import { CartProvider, useCart } from "../../context/CartContext";
 import QuantityControl from "../QuantityControl";
 import CartPopup from "../CartPopup";
+import FavoriteBtn from "../FavoriteBtn";
+
 
 const OurProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -11,21 +13,32 @@ const OurProducts = () => {
   const [error, setError] = useState(null);
   const { addToCart, getCartItemQuantity, showCartPopup, setShowCartPopup, getTotalItems } = useCart();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [productsRes, categoriesRes] = await Promise.all([
-          axios.get("http://localhost:5001/api/products"),
-          axios.get("http://localhost:5001/api/categories")
-        ]);
-        setProducts(productsRes.data.data);
-        setCategories(categoriesRes.data.data);
-      } catch (err) {
-        setError("Failed to fetch products");
-        console.log('Error fetching data: ', err);
-      }
-    };
-    fetchData();
+  useEffect(() => async () =>  {
+    try {
+       const [productsRes, categoriesRes] = await Promise.all([
+              axios.get("http://localhost:5001/api/products"),
+              axios.get("http://localhost:5001/api/categories")
+        ]); 
+      const productsData = productsRes.data.data;
+      const categoriesData = categoriesRes.data.data;
+
+      const flattenedProducts = categoriesData.flatMap(category => 
+        category.products.map(product => {
+          const fullProduct = productsData.find(p => p.id === product.id);
+          return {
+            ...fullProduct,
+            category_id: category.id,
+            category_name: category.name
+          };
+        })
+      )
+      setProducts(flattenedProducts);
+      setCategories(categoriesData);
+      
+    } catch (err) {
+      setError("Failed to load products. Please try again later.");
+      console.error(err);
+    }
   }, []);
 
   const getCategoryName = (categoryId) => {
@@ -35,7 +48,7 @@ const OurProducts = () => {
 
   const filteredProducts = selectedCategory === "All"
     ? products
-    : products.filter((product) => getCategoryName(product.category_id) === selectedCategory);
+    : products.filter(p => p.category_id === Number(selectedCategory))
 
   if (error) {
     return (
@@ -81,8 +94,8 @@ const OurProducts = () => {
         {categories.map((category) => (
           <button
             key={category.id}
-            onClick={() => setSelectedCategory(category.name)}
-            className={`px-6 py-3 rounded-full font-medium transition-all duration-200 whitespace-nowrap cursor-pointer ${selectedCategory === category.name
+            onClick={() => setSelectedCategory(String(category.id))}
+            className={`px-6 py-3 rounded-full font-medium transition-all duration-200 whitespace-nowrap cursor-pointer ${selectedCategory === String(category.id)
               ? "bg-rose-500 text-white shadow-md"
               : "bg-white text-gray-700 border border-rose-200 hover:border-rose-300 hover:bg-rose-50"
               }`}
@@ -116,9 +129,8 @@ const OurProducts = () => {
                     {getCategoryName(product.category_id)}
                   </span>
                 </div>
-                <button className="absolute top-4 right-4 w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center transition-colors cursor-pointer hover:bg-white">
-                  <i className="ri-heart-line text-gray-600 text-sm"></i>
-                </button>
+                <FavoriteBtn product={product} />
+
               </div>
               <div className="relative" style={{ marginTop: "-20px", zIndex: 10 }}>
                 {isInCart ? (
